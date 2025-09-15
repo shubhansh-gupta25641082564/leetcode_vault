@@ -1,24 +1,50 @@
-// Last updated: 15/09/2025, 21:51:19
+// Last updated: 15/09/2025, 21:53:38
+import java.util.*;
+
 class Solution {
-    public int minArrivalsToDiscard(int[] arrivals, int w, int m) {
-        int n = arrivals.length;
-        int maxType = 0;
-        for (int v : arrivals) if (v > maxType) maxType = v;
-        int[] counts = new int[maxType + 1];
-        boolean[] kept = new boolean[n];
-        int discarded = 0;
-        for (int i = 0; i < n; ++i) {
-            int outIdx = i - w;
-            if (outIdx >= 0 && kept[outIdx]) counts[arrivals[outIdx]]--;
-            int t = arrivals[i];
-            if (counts[t] < m) {
-                kept[i] = true;
-                counts[t]++;
-            } else {
-                kept[i] = false;
-                discarded++;
+    public int[][] generateSchedule(int n) {
+        if (n <= 3) return new int[0][0];
+        int M = n * (n - 1);
+        int[][] matches = new int[M][2];
+        int idx = 0;
+        for (int u = 0; u < n; ++u) for (int v = 0; v < n; ++v) if (u != v) matches[idx++] = new int[]{u, v};
+        int attempts = 100;
+        Random rnd = new Random();
+        for (int attempt = 0; attempt < attempts; ++attempt) {
+            if (attempt > 0) {
+                for (int i = M - 1; i > 0; --i) {
+                    int j = rnd.nextInt(i + 1);
+                    int[] tmp = matches[i]; matches[i] = matches[j]; matches[j] = tmp;
+                }
             }
+            boolean[] used = new boolean[M];
+            int[] deg = new int[n];
+            Arrays.fill(deg, 2 * (n - 1));
+            int lastA = -1, lastB = -1;
+            int[][] schedule = new int[M][2];
+            boolean failed = false;
+            for (int day = 0; day < M; ++day) {
+                int bestIdx = -1;
+                int bestScore = -1;
+                for (int i = 0; i < M; ++i) if (!used[i]) {
+                    int a = matches[i][0], b = matches[i][1];
+                    if (a == lastA || a == lastB || b == lastA || b == lastB) continue;
+                    int score = deg[a] + deg[b];
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestIdx = i;
+                    }
+                }
+                if (bestIdx == -1) { failed = true; break; }
+                used[bestIdx] = true;
+                int a = matches[bestIdx][0], b = matches[bestIdx][1];
+                schedule[day][0] = a;
+                schedule[day][1] = b;
+                deg[a]--; deg[b]--;
+                lastA = a; lastB = b;
+            }
+            if (!failed) return schedule;
         }
-        return discarded;
+        return new int[0][0];
     }
 }
