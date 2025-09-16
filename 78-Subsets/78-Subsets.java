@@ -1,45 +1,13 @@
-// Last updated: 16/09/2025, 23:10:15
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) { this.val = val; this.left = left; this.right = right; }
- * }
- */
-import java.util.*;
-
+// Last updated: 16/09/2025, 23:10:45
 class Solution {
-    public List<TreeNode> generateTrees(int n) {
-        if (n == 0) return new ArrayList<>();
-        return build(1, n, new HashMap<>());
-    }
-
-    private List<TreeNode> build(int start, int end, Map<String, List<TreeNode>> memo) {
-        String key = start + "#" + end;
-        if (memo.containsKey(key)) return memo.get(key);
-        List<TreeNode> res = new ArrayList<>();
-        if (start > end) {
-            res.add(null);
-            memo.put(key, res);
-            return res;
-        }
-        for (int root = start; root <= end; root++) {
-            List<TreeNode> leftList = build(start, root - 1, memo);
-            List<TreeNode> rightList = build(root + 1, end, memo);
-            for (TreeNode left : leftList) {
-                for (TreeNode right : rightList) {
-                    TreeNode node = new TreeNode(root);
-                    node.left = left;
-                    node.right = right;
-                    res.add(node);
-                }
+    public int numTrees(int n) {
+        long[] dp = new long[n + 1];
+        dp[0] = dp[1] = 1;
+        for (int nodes = 2; nodes <= n; nodes++) {
+            for (int root = 1; root <= nodes; root++) {
+                dp[nodes] += dp[root - 1] * dp[nodes - root];
             }
         }
-        memo.put(key, res);
-        return res;
+        return (int) dp[n];
     }
 }
