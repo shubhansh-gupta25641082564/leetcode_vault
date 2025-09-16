@@ -1,13 +1,11 @@
-// Last updated: 16/09/2025, 23:04:35
+// Last updated: 16/09/2025, 23:05:26
+import java.util.*;
+
 class Solution {
-    public void merge(int[] nums1, int m, int[] nums2, int n) {
-        int p1 = m - 1, p2 = n - 1, p = m + n - 1;
-        while (p2 >= 0) {
-            if (p1 >= 0 && nums1[p1] > nums2[p2]) {
-                nums1[p--] = nums1[p1--];
-            } else {
-                nums1[p--] = nums2[p2--];
-            }
-        }
+    public List<Integer> grayCode(int n) {
+        List<Integer> res = new ArrayList<>();
+        int size = 1 << n;
+        for (int i = 0; i < size; i++) res.add(i ^ (i >> 1));
+        return res;
     }
 }
