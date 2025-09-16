@@ -1,22 +1,27 @@
-// Last updated: 16/09/2025, 23:00:39
+// Last updated: 16/09/2025, 23:01:30
 import java.util.*;
 
 class Solution {
-    public int largestRectangleArea(int[] heights) {
-        int n = heights.length;
-        Deque<Integer> st = new ArrayDeque<>();
-        long max = 0;
-        for (int i = 0; i <= n; i++) {
-            int h = (i == n ? 0 : heights[i]);
-            while (!st.isEmpty() && heights[st.peekLast()] > h) {
-                int idx = st.pollLast();
-                int left = st.isEmpty() ? -1 : st.peekLast();
-                long width = i - left - 1;
-                long area = (long)heights[idx] * width;
-                if (area > max) max = area;
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) return 0;
+        int m = matrix.length, n = matrix[0].length;
+        int[] h = new int[n];
+        int max = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) h[j] = matrix[i][j] == '1' ? h[j] + 1 : 0;
+            Deque<Integer> st = new ArrayDeque<>();
+            for (int j = 0; j <= n; j++) {
+                int cur = (j == n) ? 0 : h[j];
+                while (!st.isEmpty() && h[st.peekLast()] > cur) {
+                    int height = h[st.pollLast()];
+                    int left = st.isEmpty() ? -1 : st.peekLast();
+                    int width = j - left - 1;
+                    int area = height * width;
+                    if (area > max) max = area;
+                }
+                st.addLast(j);
             }
-            st.addLast(i);
         }
-        return (int)max;
+        return max;
     }
 }
