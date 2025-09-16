@@ -1,17 +1,28 @@
-// Last updated: 16/09/2025, 23:06:50
+// Last updated: 16/09/2025, 23:08:21
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
 class Solution {
-    public int numDecodings(String s) {
-        if (s == null || s.length() == 0) return 0;
-        int n = s.length();
-        int[] dp = new int[n + 1];
-        dp[0] = 1;
-        dp[1] = s.charAt(0) == '0' ? 0 : 1;
-        for (int i = 2; i <= n; i++) {
-            char c = s.charAt(i - 1);
-            if (c != '0') dp[i] += dp[i - 1];
-            int two = Integer.parseInt(s.substring(i - 2, i));
-            if (two >= 10 && two <= 26) dp[i] += dp[i - 2];
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        if (head == null || left == right) return head;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+        for (int i = 1; i < left; i++) prev = prev.next;
+        ListNode curr = prev.next;
+        for (int i = 0; i < right - left; i++) {
+            ListNode temp = curr.next;
+            curr.next = temp.next;
+            temp.next = prev.next;
+            prev.next = temp;
         }
-        return dp[n];
+        return dummy.next;
     }
 }
