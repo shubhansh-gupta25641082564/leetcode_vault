@@ -1,4 +1,4 @@
-// Last updated: 16/09/2025, 23:11:43
+// Last updated: 16/09/2025, 23:12:17
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -11,12 +11,23 @@
  * }
  */
 class Solution {
-    public boolean isValidBST(TreeNode root) {
-        return validate(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    TreeNode first, second, prev;
+    
+    public void recoverTree(TreeNode root) {
+        first = second = null;
+        prev = new TreeNode(Integer.MIN_VALUE);
+        inorder(root);
+        int temp = first.val;
+        first.val = second.val;
+        second.val = temp;
     }
-    private boolean validate(TreeNode node, long min, long max) {
-        if (node == null) return true;
-        if (node.val <= min || node.val >= max) return false;
-        return validate(node.left, min, node.val) && validate(node.right, node.val, max);
+    
+    private void inorder(TreeNode node) {
+        if (node == null) return;
+        inorder(node.left);
+        if (first == null && prev.val > node.val) first = prev;
+        if (first != null && prev.val > node.val) second = node;
+        prev = node;
+        inorder(node.right);
     }
 }
