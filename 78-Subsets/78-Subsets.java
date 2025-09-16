@@ -1,20 +1,11 @@
-// Last updated: 16/09/2025, 22:58:47
+// Last updated: 16/09/2025, 22:59:55
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
-        ListNode prev = dummy;
         ListNode cur = head;
-        while (cur != null) {
-            boolean dup = false;
-            while (cur.next != null && cur.val == cur.next.val) {
-                dup = true;
-                cur = cur.next;
-            }
-            if (dup) prev.next = cur.next;
-            else prev = prev.next;
-            cur = cur.next;
+        while (cur != null && cur.next != null) {
+            if (cur.val == cur.next.val) cur.next = cur.next.next;
+            else cur = cur.next;
         }
-        return dummy.next;
+        return head;
     }
 }
