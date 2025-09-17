@@ -1,4 +1,4 @@
-// Last updated: 17/09/2025, 23:02:29
+// Last updated: 17/09/2025, 23:03:33
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -15,23 +15,31 @@
  * }
  */
 
+import java.util.Queue;
+import java.util.LinkedList;
+
 class Solution {
-    public boolean isBalanced(TreeNode root) {
-        return height(root) != -1;
-    }
+    public int minDepth(TreeNode root) {
+        if (root == null) return 0;
 
-    // returns height of node, or -1 if subtree is unbalanced
-    private int height(TreeNode node) {
-        if (node == null) return 0;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int depth = 1;
 
-        int leftH = height(node.left);
-        if (leftH == -1) return -1;     // left subtree is unbalanced
+        while (!q.isEmpty()) {
+            int sz = q.size();
+            for (int i = 0; i < sz; i++) {
+                TreeNode node = q.poll();
+                // If this is a leaf, we've found the minimum depth.
+                if (node.left == null && node.right == null) {
+                    return depth;
+                }
+                if (node.left != null) q.add(node.left);
+                if (node.right != null) q.add(node.right);
+            }
+            depth++;
+        }
 
-        int rightH = height(node.right);
-        if (rightH == -1) return -1;    // right subtree is unbalanced
-
-        if (Math.abs(leftH - rightH) > 1) return -1; // current node unbalanced
-
-        return Math.max(leftH, rightH) + 1;
+        return depth; // unreachable, kept for completeness
     }
 }
