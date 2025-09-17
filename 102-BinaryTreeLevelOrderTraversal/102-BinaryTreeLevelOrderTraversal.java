@@ -1,4 +1,4 @@
-// Last updated: 17/09/2025, 23:04:07
+// Last updated: 17/09/2025, 23:04:42
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -15,15 +15,36 @@
  * }
  */
 
+import java.util.List;
+import java.util.ArrayList;
+
 class Solution {
-    public boolean hasPathSum(TreeNode root, int targetSum) {
-        if (root == null) return false;                   // empty tree -> no path
-        // if leaf, check if remaining sum equals node value
-        if (root.left == null && root.right == null) {
-            return targetSum == root.val;
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (root == null) return ans;
+        List<Integer> path = new ArrayList<>();
+        dfs(root, targetSum, 0, path, ans);
+        return ans;
+    }
+
+    private void dfs(TreeNode node, int target, int currSum, List<Integer> path, List<List<Integer>> ans) {
+        if (node == null) return;
+
+        currSum += node.val;
+        path.add(node.val);
+
+        // if leaf, check sum
+        if (node.left == null && node.right == null) {
+            if (currSum == target) {
+                ans.add(new ArrayList<>(path)); // copy current path
+            }
+        } else {
+            // recurse
+            dfs(node.left, target, currSum, path, ans);
+            dfs(node.right, target, currSum, path, ans);
         }
-        // otherwise, subtract current node value and recurse
-        int remaining = targetSum - root.val;
-        return hasPathSum(root.left, remaining) || hasPathSum(root.right, remaining);
+
+        // backtrack
+        path.remove(path.size() - 1);
     }
 }
