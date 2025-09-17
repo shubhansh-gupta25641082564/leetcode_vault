@@ -1,4 +1,4 @@
-// Last updated: 17/09/2025, 23:04:42
+// Last updated: 17/09/2025, 23:05:17
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -15,36 +15,24 @@
  * }
  */
 
-import java.util.List;
-import java.util.ArrayList;
-
 class Solution {
-    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
-        List<List<Integer>> ans = new ArrayList<>();
-        if (root == null) return ans;
-        List<Integer> path = new ArrayList<>();
-        dfs(root, targetSum, 0, path, ans);
-        return ans;
-    }
-
-    private void dfs(TreeNode node, int target, int currSum, List<Integer> path, List<List<Integer>> ans) {
-        if (node == null) return;
-
-        currSum += node.val;
-        path.add(node.val);
-
-        // if leaf, check sum
-        if (node.left == null && node.right == null) {
-            if (currSum == target) {
-                ans.add(new ArrayList<>(path)); // copy current path
+    public void flatten(TreeNode root) {
+        TreeNode curr = root;
+        while (curr != null) {
+            if (curr.left != null) {
+                // find rightmost node of left subtree
+                TreeNode pred = curr.left;
+                while (pred.right != null) {
+                    pred = pred.right;
+                }
+                // link predecessor's right to curr.right
+                pred.right = curr.right;
+                // move left subtree to right
+                curr.right = curr.left;
+                curr.left = null;
             }
-        } else {
-            // recurse
-            dfs(node.left, target, currSum, path, ans);
-            dfs(node.right, target, currSum, path, ans);
+            // advance to next node (always go right in the flattened list)
+            curr = curr.right;
         }
-
-        // backtrack
-        path.remove(path.size() - 1);
     }
 }
