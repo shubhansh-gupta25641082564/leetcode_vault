@@ -1,72 +1,70 @@
-// Last updated: 18/09/2025, 23:25:13
-import java.util.*;
+// Last updated: 18/09/2025, 23:26:29
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) return head;
 
-public class LRUCache {
-    private final int capacity;
-    private final Map<Integer, Node> map;
-    private final Node head; // dummy head
-    private final Node tail; // dummy tail
+        // 1) compute length
+        int n = 0;
+        ListNode p = head;
+        while (p != null) {
+            n++;
+            p = p.next;
+        }
 
-    private static class Node {
-        int key;
-        int val;
-        Node prev;
-        Node next;
-        Node(int k, int v) { key = k; val = v; }
-    }
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
 
-    public LRUCache(int capacity) {
-        this.capacity = capacity;
-        this.map = new HashMap<>();
-        head = new Node(-1, -1);
-        tail = new Node(-1, -1);
-        head.next = tail;
-        tail.prev = head;
-    }
-
-    public int get(int key) {
-        Node node = map.get(key);
-        if (node == null) return -1;
-        // move accessed node to front (most recently used)
-        remove(node);
-        addFirst(node);
-        return node.val;
-    }
-
-    public void put(int key, int value) {
-        Node node = map.get(key);
-        if (node != null) {
-            // update value and move to front
-            node.val = value;
-            remove(node);
-            addFirst(node);
-        } else {
-            // insert new node
-            Node newNode = new Node(key, value);
-            map.put(key, newNode);
-            addFirst(newNode);
-            if (map.size() > capacity) {
-                // evict least recently used (tail.prev)
-                Node lru = tail.prev;
-                remove(lru);
-                map.remove(lru.key);
+        // bottom-up merge: step = size of sublists to merge
+        for (int step = 1; step < n; step <<= 1) {
+            ListNode prev = dummy;
+            ListNode curr = dummy.next;
+            while (curr != null) {
+                // left sublist = curr
+                ListNode left = curr;
+                // right sublist = split left after step nodes
+                ListNode right = split(left, step);
+                // next sublist start = split right after step nodes
+                curr = split(right, step);
+                // merge left and right and attach merged list after prev
+                prev = merge(left, right, prev);
             }
         }
+
+        return dummy.next;
     }
 
-    // helper: insert node right after head
-    private void addFirst(Node node) {
-        node.next = head.next;
-        node.prev = head;
-        head.next.prev = node;
-        head.next = node;
+    // Splits the list head into two parts:
+    // - first part contains at most n nodes starting from head
+    // - the function cuts after those n nodes and returns the head of the remainder
+    // If head is null, returns null.
+    private ListNode split(ListNode head, int n) {
+        if (head == null) return null;
+        for (int i = 1; head.next != null && i < n; i++) {
+            head = head.next;
+        }
+        ListNode rest = head.next;
+        head.next = null;
+        return rest;
     }
 
-    // helper: unlink node from list
-    private void remove(Node node) {
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
-        node.prev = null;
-        node.next = null;
+    // Merges two sorted lists l1 and l2, attaches result after 'prev'.
+    // Returns the tail node of the merged list (to be used as prev for next merges).
+    private ListNode merge(ListNode l1, ListNode l2, ListNode prev) {
+        ListNode cur = prev;
+        while (l1 != null && l2 != null) {
+            if (l1.val <= l2.val) {
+                cur.next = l1;
+                l1 = l1.next;
+            } else {
+                cur.next = l2;
+                l2 = l2.next;
+            }
+            cur = cur.next;
+        }
+        // attach remaining part
+        cur.next = (l1 != null) ? l1 : l2;
+        // move cur to the end of the merged segment
+        while (cur.next != null) cur = cur.next;
+        return cur;
     }
 }
