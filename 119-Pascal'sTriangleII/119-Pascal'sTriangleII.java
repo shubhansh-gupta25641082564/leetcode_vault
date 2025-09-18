@@ -1,23 +1,20 @@
-// Last updated: 18/09/2025, 23:17:28
-import java.util.*;
-
+// Last updated: 18/09/2025, 23:18:01
 public class Solution {
-    public Node cloneGraph(Node node) {
-        if (node == null) return null;
-        Map<Node, Node> map = new HashMap<>();
-        Queue<Node> q = new LinkedList<>();
-        q.add(node);
-        map.put(node, new Node(node.val, new ArrayList<>()));
-        while (!q.isEmpty()) {
-            Node cur = q.poll();
-            for (Node nei : cur.neighbors) {
-                if (!map.containsKey(nei)) {
-                    map.put(nei, new Node(nei.val, new ArrayList<>()));
-                    q.add(nei);
-                }
-                map.get(cur).neighbors.add(map.get(nei));
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int n = gas.length;
+        long total = 0;   // overall gas - cost
+        long tank = 0;    // current tank from candidate start
+        int start = 0;
+        for (int i = 0; i < n; i++) {
+            int diff = gas[i] - cost[i];
+            total += diff;
+            tank += diff;
+            if (tank < 0) {
+                // cannot start from current start, choose next station
+                start = i + 1;
+                tank = 0;
             }
         }
-        return map.get(node);
+        return total >= 0 ? (start % n) : -1;
     }
 }
