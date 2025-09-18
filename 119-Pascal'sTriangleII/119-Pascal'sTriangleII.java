@@ -1,32 +1,23 @@
-// Last updated: 18/09/2025, 23:16:04
+// Last updated: 18/09/2025, 23:17:28
+import java.util.*;
+
 public class Solution {
-    public int minCut(String s) {
-        int n = s.length();
-        if (n <= 1) return 0;
-
-        // pal[i][j] = true if s[i..j] is a palindrome
-        boolean[][] pal = new boolean[n][n];
-        for (int i = n - 1; i >= 0; i--) {
-            for (int j = i; j < n; j++) {
-                pal[i][j] = (s.charAt(i) == s.charAt(j)) && (j - i < 2 || pal[i + 1][j - 1]);
-            }
-        }
-
-        // cuts[i] = minimum cuts needed for substring s[0..i]
-        int[] cuts = new int[n];
-        for (int i = 0; i < n; i++) {
-            if (pal[0][i]) {
-                cuts[i] = 0; // no cut needed if s[0..i] is palindrome
-            } else {
-                int min = Integer.MAX_VALUE;
-                for (int j = 0; j < i; j++) {
-                    if (pal[j + 1][i]) {
-                        min = Math.min(min, cuts[j] + 1);
-                    }
+    public Node cloneGraph(Node node) {
+        if (node == null) return null;
+        Map<Node, Node> map = new HashMap<>();
+        Queue<Node> q = new LinkedList<>();
+        q.add(node);
+        map.put(node, new Node(node.val, new ArrayList<>()));
+        while (!q.isEmpty()) {
+            Node cur = q.poll();
+            for (Node nei : cur.neighbors) {
+                if (!map.containsKey(nei)) {
+                    map.put(nei, new Node(nei.val, new ArrayList<>()));
+                    q.add(nei);
                 }
-                cuts[i] = min;
+                map.get(cur).neighbors.add(map.get(nei));
             }
         }
-        return cuts[n - 1];
+        return map.get(node);
     }
 }
