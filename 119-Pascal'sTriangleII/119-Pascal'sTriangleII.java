@@ -1,20 +1,32 @@
-// Last updated: 18/09/2025, 23:18:01
+// Last updated: 18/09/2025, 23:18:32
+import java.util.Arrays;
+
 public class Solution {
-    public int canCompleteCircuit(int[] gas, int[] cost) {
-        int n = gas.length;
-        long total = 0;   // overall gas - cost
-        long tank = 0;    // current tank from candidate start
-        int start = 0;
-        for (int i = 0; i < n; i++) {
-            int diff = gas[i] - cost[i];
-            total += diff;
-            tank += diff;
-            if (tank < 0) {
-                // cannot start from current start, choose next station
-                start = i + 1;
-                tank = 0;
+    public int candy(int[] ratings) {
+        if (ratings == null || ratings.length == 0) return 0;
+        int n = ratings.length;
+        int[] left = new int[n];
+        Arrays.fill(left, 1);
+
+        // left-to-right: satisfy left neighbor condition
+        for (int i = 1; i < n; i++) {
+            if (ratings[i] > ratings[i - 1]) {
+                left[i] = left[i - 1] + 1;
             }
         }
-        return total >= 0 ? (start % n) : -1;
+
+        // right-to-left: satisfy right neighbor condition and accumulate result
+        int res = 0;
+        int right = 1; // candies needed considering only the right neighbor
+        for (int i = n - 1; i >= 0; i--) {
+            if (i < n - 1 && ratings[i] > ratings[i + 1]) {
+                right = right + 1;
+            } else if (i < n - 1) {
+                right = 1;
+            }
+            res += Math.max(left[i], right);
+        }
+
+        return res;
     }
 }
