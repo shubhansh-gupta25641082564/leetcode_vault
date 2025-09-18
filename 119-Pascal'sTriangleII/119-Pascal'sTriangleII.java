@@ -1,14 +1,30 @@
-// Last updated: 18/09/2025, 23:21:44
+// Last updated: 18/09/2025, 23:22:19
 public class Solution {
-    public boolean hasCycle(ListNode head) {
-        if (head == null || head.next == null) return false;
+    public ListNode detectCycle(ListNode head) {
+        if (head == null) return null;
+
         ListNode slow = head;
-        ListNode fast = head.next;
+        ListNode fast = head;
+        boolean found = false;
+
+        // detect cycle
         while (fast != null && fast.next != null) {
-            if (slow == fast) return true;
             slow = slow.next;
             fast = fast.next.next;
+            if (slow == fast) { // meeting point
+                found = true;
+                break;
+            }
         }
-        return false;
+
+        if (!found) return null; // no cycle
+
+        // find cycle start
+        ListNode ptr = head;
+        while (ptr != slow) {
+            ptr = ptr.next;
+            slow = slow.next;
+        }
+        return ptr;
     }
 }
