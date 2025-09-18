@@ -1,38 +1,26 @@
-// Last updated: 18/09/2025, 23:20:06
+// Last updated: 18/09/2025, 23:20:38
+import java.util.*;
+
 public class Solution {
-    public Node copyRandomList(Node head) {
-        if (head == null) return null;
+    public boolean wordBreak(String s, List<String> wordDict) {
+        int n = s.length();
+        boolean[] dp = new boolean[n + 1];
+        dp[0] = true;
+        // optional: put words in a HashSet for O(1) contains checks
+        Set<String> set = new HashSet<>(wordDict);
+        // optional: compute max word length to limit inner loop
+        int maxLen = 0;
+        for (String w : wordDict) maxLen = Math.max(maxLen, w.length());
 
-        // 1) For each original node, create its copy and insert it right after the original node.
-        Node cur = head;
-        while (cur != null) {
-            Node copy = new Node(cur.val);
-            copy.next = cur.next;
-            cur.next = copy;
-            cur = copy.next;
-        }
-
-        // 2) Assign random pointers for the copied nodes.
-        cur = head;
-        while (cur != null) {
-            if (cur.random != null) {
-                cur.next.random = cur.random.next; // copy.random = original.random.next
+        for (int i = 1; i <= n; i++) {
+            // try previous cut position j where j >= i - maxLen
+            for (int j = Math.max(0, i - maxLen); j < i; j++) {
+                if (dp[j] && set.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break;
+                }
             }
-            cur = cur.next.next;
         }
-
-        // 3) Restore the original list and extract the copied list.
-        cur = head;
-        Node pseudoHead = new Node(0);
-        Node copyIter = pseudoHead;
-        while (cur != null) {
-            Node copy = cur.next;
-            cur.next = copy.next;         // restore original next
-            copyIter.next = copy;         // append copy to new list
-            copyIter = copyIter.next;
-            cur = cur.next;
-        }
-
-        return pseudoHead.next;
+        return dp[n];
     }
 }
