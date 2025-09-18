@@ -1,30 +1,38 @@
-// Last updated: 18/09/2025, 23:22:19
+// Last updated: 18/09/2025, 23:22:54
 public class Solution {
-    public ListNode detectCycle(ListNode head) {
-        if (head == null) return null;
+    public void reorderList(ListNode head) {
+        if (head == null || head.next == null) return;
 
-        ListNode slow = head;
-        ListNode fast = head;
-        boolean found = false;
-
-        // detect cycle
-        while (fast != null && fast.next != null) {
+        // 1. find middle (slow will point to end of first half)
+        ListNode slow = head, fast = head;
+        while (fast.next != null && fast.next.next != null) {
             slow = slow.next;
             fast = fast.next.next;
-            if (slow == fast) { // meeting point
-                found = true;
-                break;
-            }
         }
 
-        if (!found) return null; // no cycle
-
-        // find cycle start
-        ListNode ptr = head;
-        while (ptr != slow) {
-            ptr = ptr.next;
-            slow = slow.next;
+        // 2. split and reverse second half
+        ListNode second = slow.next;
+        slow.next = null; // terminate first half
+        ListNode prev = null;
+        while (second != null) {
+            ListNode nxt = second.next;
+            second.next = prev;
+            prev = second;
+            second = nxt;
         }
-        return ptr;
+        // now prev is head of reversed second half
+
+        // 3. merge first half (head) and reversed second half (prev)
+        ListNode first = head;
+        while (prev != null) {
+            ListNode n1 = first.next;
+            ListNode n2 = prev.next;
+
+            first.next = prev;
+            prev.next = n1;
+
+            first = n1;
+            prev = n2;
+        }
     }
 }
