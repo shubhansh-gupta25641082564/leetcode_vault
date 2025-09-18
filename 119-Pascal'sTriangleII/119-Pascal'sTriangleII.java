@@ -1,32 +1,32 @@
-// Last updated: 18/09/2025, 23:15:35
-import java.util.*;
-
+// Last updated: 18/09/2025, 23:16:04
 public class Solution {
-    public List<List<String>> partition(String s) {
+    public int minCut(String s) {
         int n = s.length();
+        if (n <= 1) return 0;
+
+        // pal[i][j] = true if s[i..j] is a palindrome
         boolean[][] pal = new boolean[n][n];
         for (int i = n - 1; i >= 0; i--) {
             for (int j = i; j < n; j++) {
-                pal[i][j] = s.charAt(i) == s.charAt(j) && (j - i < 2 || pal[i + 1][j - 1]);
+                pal[i][j] = (s.charAt(i) == s.charAt(j)) && (j - i < 2 || pal[i + 1][j - 1]);
             }
         }
-        List<List<String>> res = new ArrayList<>();
-        dfs(0, s, pal, new ArrayList<>(), res);
-        return res;
-    }
 
-    private void dfs(int idx, String s, boolean[][] pal, List<String> cur, List<List<String>> res) {
-        int n = s.length();
-        if (idx == n) {
-            res.add(new ArrayList<>(cur));
-            return;
-        }
-        for (int j = idx; j < n; j++) {
-            if (pal[idx][j]) {
-                cur.add(s.substring(idx, j + 1));
-                dfs(j + 1, s, pal, cur, res);
-                cur.remove(cur.size() - 1);
+        // cuts[i] = minimum cuts needed for substring s[0..i]
+        int[] cuts = new int[n];
+        for (int i = 0; i < n; i++) {
+            if (pal[0][i]) {
+                cuts[i] = 0; // no cut needed if s[0..i] is palindrome
+            } else {
+                int min = Integer.MAX_VALUE;
+                for (int j = 0; j < i; j++) {
+                    if (pal[j + 1][i]) {
+                        min = Math.min(min, cuts[j] + 1);
+                    }
+                }
+                cuts[i] = min;
             }
         }
+        return cuts[n - 1];
     }
 }
