@@ -1,38 +1,17 @@
-// Last updated: 18/09/2025, 23:22:54
-public class Solution {
-    public void reorderList(ListNode head) {
-        if (head == null || head.next == null) return;
+// Last updated: 18/09/2025, 23:23:24
+import java.util.*;
 
-        // 1. find middle (slow will point to end of first half)
-        ListNode slow = head, fast = head;
-        while (fast.next != null && fast.next.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        preorder(root, result);
+        return result;
+    }
 
-        // 2. split and reverse second half
-        ListNode second = slow.next;
-        slow.next = null; // terminate first half
-        ListNode prev = null;
-        while (second != null) {
-            ListNode nxt = second.next;
-            second.next = prev;
-            prev = second;
-            second = nxt;
-        }
-        // now prev is head of reversed second half
-
-        // 3. merge first half (head) and reversed second half (prev)
-        ListNode first = head;
-        while (prev != null) {
-            ListNode n1 = first.next;
-            ListNode n2 = prev.next;
-
-            first.next = prev;
-            prev.next = n1;
-
-            first = n1;
-            prev = n2;
-        }
+    private void preorder(TreeNode node, List<Integer> result) {
+        if (node == null) return;
+        result.add(node.val);           // visit root
+        preorder(node.left, result);    // visit left
+        preorder(node.right, result);   // visit right
     }
 }
