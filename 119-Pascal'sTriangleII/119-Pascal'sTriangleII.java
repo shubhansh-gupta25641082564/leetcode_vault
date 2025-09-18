@@ -1,70 +1,62 @@
-// Last updated: 18/09/2025, 23:26:29
+// Last updated: 18/09/2025, 23:27:00
+import java.util.*;
+
 public class Solution {
-    public ListNode sortList(ListNode head) {
-        if (head == null || head.next == null) return head;
+    public int maxPoints(int[][] points) {
+        int n = points.length;
+        if (n <= 2) return n;
 
-        // 1) compute length
-        int n = 0;
-        ListNode p = head;
-        while (p != null) {
-            n++;
-            p = p.next;
-        }
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            Map<Long, Integer> count = new HashMap<>();
+            int same = 0;       // identical points to points[i] (not needed if points unique)
+            int localMax = 0;
+            int xi = points[i][0], yi = points[i][1];
 
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
-
-        // bottom-up merge: step = size of sublists to merge
-        for (int step = 1; step < n; step <<= 1) {
-            ListNode prev = dummy;
-            ListNode curr = dummy.next;
-            while (curr != null) {
-                // left sublist = curr
-                ListNode left = curr;
-                // right sublist = split left after step nodes
-                ListNode right = split(left, step);
-                // next sublist start = split right after step nodes
-                curr = split(right, step);
-                // merge left and right and attach merged list after prev
-                prev = merge(left, right, prev);
+            for (int j = i + 1; j < n; j++) {
+                int xj = points[j][0], yj = points[j][1];
+                int dx = xj - xi;
+                int dy = yj - yi;
+                if (dx == 0 && dy == 0) {
+                    same++; // identical point
+                    continue;
+                }
+                int g = gcd(dx, dy);
+                dx /= g;
+                dy /= g;
+                // normalize sign: make dx positive; if dx==0 make dy = 1 (vertical line)
+                if (dx < 0) {
+                    dx = -dx;
+                    dy = -dy;
+                } else if (dx == 0 && dy < 0) {
+                    // for vertical lines, keep dy positive
+                    dy = -dy;
+                }
+                long key = (((long) dx) << 32) | ((long) dy & 0xffffffffL);
+                int val = count.getOrDefault(key, 0) + 1;
+                count.put(key, val);
+                localMax = Math.max(localMax, val);
             }
-        }
 
-        return dummy.next;
+            // +1 for the anchor itself, +same for duplicates
+            ans = Math.max(ans, localMax + 1 + same);
+            // small optimization: if remaining points cannot beat current ans, can break early
+            // (not necessary but can help)
+            if (ans >= n - i) break;
+        }
+        return ans;
     }
 
-    // Splits the list head into two parts:
-    // - first part contains at most n nodes starting from head
-    // - the function cuts after those n nodes and returns the head of the remainder
-    // If head is null, returns null.
-    private ListNode split(ListNode head, int n) {
-        if (head == null) return null;
-        for (int i = 1; head.next != null && i < n; i++) {
-            head = head.next;
+    private int gcd(int a, int b) {
+        if (a == 0) return Math.abs(b);
+        if (b == 0) return Math.abs(a);
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b != 0) {
+            int t = a % b;
+            a = b;
+            b = t;
         }
-        ListNode rest = head.next;
-        head.next = null;
-        return rest;
-    }
-
-    // Merges two sorted lists l1 and l2, attaches result after 'prev'.
-    // Returns the tail node of the merged list (to be used as prev for next merges).
-    private ListNode merge(ListNode l1, ListNode l2, ListNode prev) {
-        ListNode cur = prev;
-        while (l1 != null && l2 != null) {
-            if (l1.val <= l2.val) {
-                cur.next = l1;
-                l1 = l1.next;
-            } else {
-                cur.next = l2;
-                l2 = l2.next;
-            }
-            cur = cur.next;
-        }
-        // attach remaining part
-        cur.next = (l1 != null) ? l1 : l2;
-        // move cur to the end of the merged segment
-        while (cur.next != null) cur = cur.next;
-        return cur;
+        return a;
     }
 }
