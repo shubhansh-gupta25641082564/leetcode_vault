@@ -1,16 +1,12 @@
-// Last updated: 18/09/2025, 22:47:51
-import java.util.*;
-
+// Last updated: 18/09/2025, 22:48:41
 public class Solution {
-    public int minimumTotal(List<List<Integer>> triangle) {
-        int n = triangle.size();
-        int[] dp = new int[n];
-        for (int j = 0; j < n; j++) dp[j] = triangle.get(n - 1).get(j);
-        for (int i = n - 2; i >= 0; i--) {
-            for (int j = 0; j <= i; j++) {
-                dp[j] = triangle.get(i).get(j) + Math.min(dp[j], dp[j + 1]);
-            }
+    public int maxProfit(int[] prices) {
+        int minPrice = Integer.MAX_VALUE;
+        int maxProfit = 0;
+        for (int price : prices) {
+            if (price < minPrice) minPrice = price;
+            else if (price - minPrice > maxProfit) maxProfit = price - minPrice;
         }
-        return dp[0];
+        return maxProfit;
     }
 }
