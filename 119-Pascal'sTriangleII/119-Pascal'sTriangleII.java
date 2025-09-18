@@ -1,17 +1,17 @@
-// Last updated: 18/09/2025, 23:23:24
+// Last updated: 18/09/2025, 23:24:41
 import java.util.*;
 
 class Solution {
-    public List<Integer> preorderTraversal(TreeNode root) {
-        List<Integer> result = new ArrayList<>();
-        preorder(root, result);
-        return result;
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        dfs(root, res);
+        return res;
     }
 
-    private void preorder(TreeNode node, List<Integer> result) {
+    private void dfs(TreeNode node, List<Integer> res) {
         if (node == null) return;
-        result.add(node.val);           // visit root
-        preorder(node.left, result);    // visit left
-        preorder(node.right, result);   // visit right
+        dfs(node.left, res);
+        dfs(node.right, res);
+        res.add(node.val);
     }
 }
