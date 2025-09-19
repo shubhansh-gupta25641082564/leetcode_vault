@@ -1,4 +1,4 @@
-// Last updated: 20/09/2025, 00:07:26
+// Last updated: 20/09/2025, 00:08:33
 class Solution {
     public int findMin(int[] nums) {
         int low = 0, high = nums.length - 1;
@@ -6,8 +6,10 @@ class Solution {
             int mid = low + (high - low) / 2;
             if (nums[mid] > nums[high]) {
                 low = mid + 1;
-            } else {
+            } else if (nums[mid] < nums[high]) {
                 high = mid;
+            } else { // nums[mid] == nums[high]
+                high--;
             }
         }
         return nums[low];
