@@ -1,20 +1,15 @@
-// Last updated: 20/09/2025, 00:03:21
+// Last updated: 20/09/2025, 00:07:26
 class Solution {
-    public int maxProduct(int[] nums) {
-        int n = nums.length;
-        int maxProd = nums[0];
-        int minProd = nums[0];
-        int result = nums[0];
-        for (int i = 1; i < n; i++) {
-            int x = nums[i];
-            int a = maxProd * x;
-            int b = minProd * x;
-            int currMax = Math.max(x, Math.max(a, b));
-            int currMin = Math.min(x, Math.min(a, b));
-            maxProd = currMax;
-            minProd = currMin;
-            result = Math.max(result, maxProd);
+    public int findMin(int[] nums) {
+        int low = 0, high = nums.length - 1;
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (nums[mid] > nums[high]) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
         }
-        return result;
+        return nums[low];
     }
 }
