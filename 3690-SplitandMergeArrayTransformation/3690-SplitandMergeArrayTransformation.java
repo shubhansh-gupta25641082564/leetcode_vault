@@ -1,67 +1,57 @@
-// Last updated: 21/09/2025, 15:33:02
+// Last updated: 21/09/2025, 16:37:34
 import java.util.*;
 
 class Solution {
-    public int minSplitMerge(int[] nums1, int[] nums2) {
-        int n = nums1.length;
-        if (Arrays.equals(nums1, nums2)) return 0;
+    static class Node {
+        int l, r;
+        long val;
+        Node(int l, int r, long val) { this.l = l; this.r = r; this.val = val; }
+    }
 
-        String targetKey = Arrays.toString(nums2);
-        Queue<int[]> q = new LinkedList<>();
-        Queue<Integer> stepsQ = new LinkedList<>();
-        Set<String> seen = new HashSet<>();
-
-        q.add(nums1.clone());
-        stepsQ.add(0);
-        seen.add(Arrays.toString(nums1));
-
-        while (!q.isEmpty()) {
-            int[] cur = q.poll();
-            int steps = stepsQ.poll();
-
-            // generate all split-and-merge operations
-            for (int L = 0; L < n; ++L) {
-                for (int R = L; R < n; ++R) {
-                    int len = R - L + 1;
-                    // build removed subarray
-                    int[] removed = new int[len];
-                    for (int i = 0; i < len; ++i) removed[i] = cur[L + i];
-
-                    // build remaining array
-                    int[] rem = new int[n - len];
-                    int idx = 0;
-                    for (int i = 0; i < n; ++i) {
-                        if (i < L || i > R) rem[idx++] = cur[i];
-                    }
-
-                    // insert removed at every possible position in remaining (0..rem.length)
-                    for (int insertPos = 0; insertPos <= rem.length; ++insertPos) {
-                        // if insertion position equals original position (i.e., results in same array), skip
-                        // original insertion position relative to remaining after removal is L
-                        if (insertPos == L) continue;
-
-                        int[] next = new int[n];
-                        int p = 0;
-                        // copy left part of rem before insertion
-                        for (int i = 0; i < insertPos; ++i) next[p++] = rem[i];
-                        // copy removed
-                        for (int x : removed) next[p++] = x;
-                        // copy remaining right part
-                        for (int i = insertPos; i < rem.length; ++i) next[p++] = rem[i];
-
-                        String key = Arrays.toString(next);
-                        if (seen.contains(key)) continue;
-                        if (key.equals(targetKey)) return steps + 1;
-                        seen.add(key);
-                        q.add(next);
-                        stepsQ.add(steps + 1);
-                    }
-                }
+    public long maxTotalValue(int[] nums, int k) {
+        int n = nums.length;
+        int LOG = 0;
+        while ((1 << LOG) <= n) LOG++;
+        int[][] stMax = new int[n][LOG];
+        int[][] stMin = new int[n][LOG];
+        for (int i = 0; i < n; ++i) {
+            stMax[i][0] = nums[i];
+            stMin[i][0] = nums[i];
+        }
+        for (int j = 1; j < LOG; ++j) {
+            int len = 1 << j;
+            for (int i = 0; i + len - 1 < n; ++i) {
+                stMax[i][j] = Math.max(stMax[i][j - 1], stMax[i + (1 << (j - 1))][j - 1]);
+                stMin[i][j] = Math.min(stMin[i][j - 1], stMin[i + (1 << (j - 1))][j - 1]);
             }
         }
+        int[] log2 = new int[n + 1];
+        log2[1] = 0;
+        for (int i = 2; i <= n; ++i) log2[i] = log2[i >> 1] + 1;
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> Long.compare(b.val, a.val));
+        for (int l = 0; l < n; ++l) {
+            int r = n - 1;
+            long val = queryRange(stMax, stMin, log2, l, r);
+            pq.offer(new Node(l, r, val));
+        }
+        long ans = 0;
+        for (int taken = 0; taken < k && !pq.isEmpty(); ++taken) {
+            Node cur = pq.poll();
+            ans += cur.val;
+            if (cur.r - 1 >= cur.l) {
+                int nr = cur.r - 1;
+                long nval = queryRange(stMax, stMin, log2, cur.l, nr);
+                pq.offer(new Node(cur.l, nr, nval));
+            }
+        }
+        return ans;
+    }
 
-        // since nums2 is a permutation of nums1 and operations can reorder, we should find it;
-        // but return -1 defensively if not found
-        return -1;
+    private long queryRange(int[][] stMax, int[][] stMin, int[] log2, int l, int r) {
+        int len = r - l + 1;
+        int j = log2[len];
+        int a = Math.max(stMax[l][j], stMax[r - (1 << j) + 1][j]);
+        int b = Math.min(stMin[l][j], stMin[r - (1 << j) + 1][j]);
+        return (long)a - (long)b;
     }
 }
