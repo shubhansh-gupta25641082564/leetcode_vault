@@ -1,40 +1,20 @@
-// Last updated: 21/09/2025, 18:07:54
+// Last updated: 21/09/2025, 18:09:03
 import java.util.*;
 
 class Solution {
-    public List<Integer> diffWaysToCompute(String expression) {
-        // Memoization to avoid recomputation
-        Map<String, List<Integer>> memo = new HashMap<>();
-        return compute(expression, memo);
-    }
+    public boolean isAnagram(String s, String t) {
+        if (s.length() != t.length()) return false;
 
-    private List<Integer> compute(String expr, Map<String, List<Integer>> memo) {
-        if (memo.containsKey(expr)) return memo.get(expr);
-
-        List<Integer> res = new ArrayList<>();
-        for (int i = 0; i < expr.length(); i++) {
-            char c = expr.charAt(i);
-            if (c == '+' || c == '-' || c == '*') {
-                String leftPart = expr.substring(0, i);
-                String rightPart = expr.substring(i + 1);
-
-                List<Integer> leftResults = compute(leftPart, memo);
-                List<Integer> rightResults = compute(rightPart, memo);
-
-                for (int left : leftResults) {
-                    for (int right : rightResults) {
-                        if (c == '+') res.add(left + right);
-                        else if (c == '-') res.add(left - right);
-                        else if (c == '*') res.add(left * right);
-                    }
-                }
-            }
+        int[] count = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            count[s.charAt(i) - 'a']++;
+            count[t.charAt(i) - 'a']--;
         }
 
-        // If res is empty, expr is a number
-        if (res.isEmpty()) res.add(Integer.parseInt(expr));
+        for (int c : count) {
+            if (c != 0) return false;
+        }
 
-        memo.put(expr, res);
-        return res;
+        return true;
     }
 }
