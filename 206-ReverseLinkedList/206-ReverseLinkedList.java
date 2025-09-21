@@ -1,27 +1,19 @@
-// Last updated: 21/09/2025, 17:45:15
+// Last updated: 21/09/2025, 17:47:13
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
+ * Definition for singly-linked list.
+ * public class ListNode {
  *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        if (root == null || root == p || root == q) return root;
-        
-        TreeNode left = lowestCommonAncestor(root.left, p, q);
-        TreeNode right = lowestCommonAncestor(root.right, p, q);
-        
-        if (left != null && right != null) return root;
-        return left != null ? left : right;
+    public void deleteNode(ListNode node) {
+        // Copy the value from the next node into the current node
+        node.val = node.next.val;
+        // Skip the next node
+        node.next = node.next.next;
     }
 }
