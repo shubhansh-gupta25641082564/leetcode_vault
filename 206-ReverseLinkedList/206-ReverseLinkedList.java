@@ -1,24 +1,26 @@
-// Last updated: 21/09/2025, 16:44:30
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
+// Last updated: 21/09/2025, 16:45:34
+import java.util.*;
+
 class Solution {
-    public ListNode reverseList(ListNode head) {
-        ListNode prev = null;
-        ListNode curr = head;
-        while (curr != null) {
-            ListNode nxt = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = nxt;
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        List<Integer>[] g = new List[numCourses];
+        for (int i = 0; i < numCourses; ++i) g[i] = new ArrayList<>();
+        int[] indeg = new int[numCourses];
+        for (int[] p : prerequisites) {
+            int a = p[0], b = p[1];
+            g[b].add(a);
+            indeg[a]++;
         }
-        return prev;
+        Deque<Integer> q = new ArrayDeque<>();
+        for (int i = 0; i < numCourses; ++i) if (indeg[i] == 0) q.add(i);
+        int seen = 0;
+        while (!q.isEmpty()) {
+            int u = q.poll();
+            seen++;
+            for (int v : g[u]) {
+                if (--indeg[v] == 0) q.add(v);
+            }
+        }
+        return seen == numCourses;
     }
 }
