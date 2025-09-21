@@ -1,32 +1,25 @@
-// Last updated: 21/09/2025, 17:07:25
-import java.util.*;
-
-class MyStack {
-    private Queue<Integer> q1;
-    private Queue<Integer> q2;
-
-    public MyStack() {
-        q1 = new LinkedList<>();
-        q2 = new LinkedList<>();
-    }
-    
-    public void push(int x) {
-        q2.offer(x);
-        while (!q1.isEmpty()) q2.offer(q1.poll());
-        Queue<Integer> temp = q1;
-        q1 = q2;
-        q2 = temp;
-    }
-    
-    public int pop() {
-        return q1.poll();
-    }
-    
-    public int top() {
-        return q1.peek();
-    }
-    
-    public boolean empty() {
-        return q1.isEmpty();
+// Last updated: 21/09/2025, 17:12:07
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return null;
+        TreeNode tmp = root.left;
+        root.left = invertTree(root.right);
+        root.right = invertTree(tmp);
+        return root;
     }
 }
