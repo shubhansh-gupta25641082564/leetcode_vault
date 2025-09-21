@@ -1,36 +1,32 @@
-// Last updated: 21/09/2025, 17:04:21
+// Last updated: 21/09/2025, 17:07:25
 import java.util.*;
 
-class Solution {
-    public int calculate(String s) {
-        int n = s.length();
-        Deque<Integer> stack = new ArrayDeque<>();
-        int res = 0, sign = 1, i = 0;
-        while (i < n) {
-            char c = s.charAt(i);
-            if (Character.isDigit(c)) {
-                int num = 0;
-                while (i < n && Character.isDigit(s.charAt(i))) {
-                    num = num * 10 + (s.charAt(i) - '0');
-                    i++;
-                }
-                res += sign * num;
-                continue;
-            } else if (c == '+') {
-                sign = 1;
-            } else if (c == '-') {
-                sign = -1;
-            } else if (c == '(') {
-                stack.push(res);
-                stack.push(sign);
-                res = 0;
-                sign = 1;
-            } else if (c == ')') {
-                res *= stack.pop(); // pop sign
-                res += stack.pop(); // pop previous res
-            }
-            i++;
-        }
-        return res;
+class MyStack {
+    private Queue<Integer> q1;
+    private Queue<Integer> q2;
+
+    public MyStack() {
+        q1 = new LinkedList<>();
+        q2 = new LinkedList<>();
+    }
+    
+    public void push(int x) {
+        q2.offer(x);
+        while (!q1.isEmpty()) q2.offer(q1.poll());
+        Queue<Integer> temp = q1;
+        q1 = q2;
+        q2 = temp;
+    }
+    
+    public int pop() {
+        return q1.poll();
+    }
+    
+    public int top() {
+        return q1.peek();
+    }
+    
+    public boolean empty() {
+        return q1.isEmpty();
     }
 }
