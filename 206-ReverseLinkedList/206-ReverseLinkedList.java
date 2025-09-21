@@ -1,19 +1,22 @@
-// Last updated: 21/09/2025, 17:47:13
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
+// Last updated: 21/09/2025, 17:49:33
 class Solution {
-    public void deleteNode(ListNode node) {
-        // Copy the value from the next node into the current node
-        node.val = node.next.val;
-        // Skip the next node
-        node.next = node.next.next;
+    public int[] productExceptSelf(int[] nums) {
+        int n = nums.length;
+        int[] answer = new int[n];
+        
+        // Initialize the answer array with prefix products
+        answer[0] = 1;
+        for (int i = 1; i < n; i++) {
+            answer[i] = answer[i - 1] * nums[i - 1];
+        }
+        
+        // Multiply with suffix products
+        int suffixProduct = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            answer[i] = answer[i] * suffixProduct;
+            suffixProduct *= nums[i];
+        }
+        
+        return answer;
     }
 }
