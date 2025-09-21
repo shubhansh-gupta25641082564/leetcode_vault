@@ -1,23 +1,37 @@
-// Last updated: 21/09/2025, 18:45:56
+// Last updated: 21/09/2025, 18:51:44
+import java.util.*;
 class Solution {
-    public int maxProfit(int[] prices) {
-        if (prices == null || prices.length == 0) return 0;
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        if (n == 1) return Arrays.asList(0);
     
-    int n = prices.length;
-    int hold = -prices[0]; // holding stock
-    int sold = 0;          // just sold
-    int rest = 0;          // cooldown / rest
-    
-    for (int i = 1; i < n; i++) {
-        int prevHold = hold;
-        int prevSold = sold;
-        int prevRest = rest;
-        
-        hold = Math.max(prevHold, prevRest - prices[i]);
-        sold = prevHold + prices[i];
-        rest = Math.max(prevRest, prevSold);
+    // Build the adjacency list
+    List<Set<Integer>> adj = new ArrayList<>();
+    for (int i = 0; i < n; i++) adj.add(new HashSet<>());
+    for (int[] edge : edges) {
+        adj.get(edge[0]).add(edge[1]);
+        adj.get(edge[1]).add(edge[0]);
     }
     
-    return Math.max(sold, rest);
+    // Initialize leaves
+    List<Integer> leaves = new ArrayList<>();
+    for (int i = 0; i < n; i++) {
+        if (adj.get(i).size() == 1) leaves.add(i);
+    }
+    
+    int remainingNodes = n;
+    while (remainingNodes > 2) {
+        remainingNodes -= leaves.size();
+        List<Integer> newLeaves = new ArrayList<>();
+        
+        for (int leaf : leaves) {
+            int neighbor = adj.get(leaf).iterator().next();
+            adj.get(neighbor).remove(leaf);
+            if (adj.get(neighbor).size() == 1) newLeaves.add(neighbor);
+        }
+        
+        leaves = newLeaves;
+    }
+    
+    return leaves;
     }
 }
