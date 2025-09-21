@@ -1,21 +1,35 @@
-// Last updated: 21/09/2025, 16:55:00
+// Last updated: 21/09/2025, 16:55:50
+import java.util.*;
+
 class Solution {
-    public String shortestPalindrome(String s) {
-        if (s == null || s.length() <= 1) return s;
-        String rev = new StringBuilder(s).reverse().toString();
-        String comb = s + "#" + rev;
-        int m = comb.length();
-        int[] pi = new int[m];
-        for (int i = 1; i < m; ++i) {
-            int j = pi[i - 1];
-            char c = comb.charAt(i);
-            while (j > 0 && comb.charAt(j) != c) j = pi[j - 1];
-            if (comb.charAt(j) == c) j++;
-            pi[i] = j;
+    private final Random rand = new Random();
+    public int findKthLargest(int[] nums, int k) {
+        int n = nums.length;
+        int target = n - k;
+        int lo = 0, hi = n - 1;
+        while (lo <= hi) {
+            int pivotIndex = lo + rand.nextInt(hi - lo + 1);
+            int pos = partition(nums, lo, hi, pivotIndex);
+            if (pos == target) return nums[pos];
+            else if (pos < target) lo = pos + 1;
+            else hi = pos - 1;
         }
-        int palPrefLen = pi[m - 1];
-        String suffix = s.substring(palPrefLen);
-        String add = new StringBuilder(suffix).reverse().toString();
-        return add + s;
+        return -1;
+    }
+    private int partition(int[] a, int l, int r, int pivotIdx) {
+        int pv = a[pivotIdx];
+        swap(a, pivotIdx, r);
+        int store = l;
+        for (int i = l; i < r; ++i) {
+            if (a[i] < pv) {
+                swap(a, store, i);
+                store++;
+            }
+        }
+        swap(a, store, r);
+        return store;
+    }
+    private void swap(int[] a, int i, int j) {
+        int t = a[i]; a[i] = a[j]; a[j] = t;
     }
 }
