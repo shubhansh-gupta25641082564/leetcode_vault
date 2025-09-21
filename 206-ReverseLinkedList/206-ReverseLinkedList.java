@@ -1,25 +1,18 @@
-// Last updated: 21/09/2025, 17:14:12
+// Last updated: 21/09/2025, 17:14:51
 import java.util.*;
 
 class Solution {
-    public int calculate(String s) {
-        Deque<Integer> stack = new ArrayDeque<>();
-        int n = s.length(), num = 0;
-        char sign = '+';
-        for (int i = 0; i < n; ++i) {
-            char c = s.charAt(i);
-            if (Character.isDigit(c)) num = num * 10 + (c - '0');
-            if ((!Character.isDigit(c) && c != ' ') || i == n - 1) {
-                if (sign == '+') stack.push(num);
-                else if (sign == '-') stack.push(-num);
-                else if (sign == '*') stack.push(stack.pop() * num);
-                else if (sign == '/') stack.push(stack.pop() / num);
-                sign = c;
-                num = 0;
-            }
+    public List<String> summaryRanges(int[] nums) {
+        List<String> res = new ArrayList<>();
+        int n = nums.length, i = 0;
+        while (i < n) {
+            int start = nums[i];
+            while (i + 1 < n && nums[i + 1] == nums[i] + 1) i++;
+            int end = nums[i];
+            if (start == end) res.add(String.valueOf(start));
+            else res.add(start + "->" + end);
+            i++;
         }
-        int res = 0;
-        while (!stack.isEmpty()) res += stack.pop();
         return res;
     }
 }
