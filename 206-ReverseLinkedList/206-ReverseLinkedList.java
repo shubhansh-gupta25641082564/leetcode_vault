@@ -1,27 +1,12 @@
-// Last updated: 21/09/2025, 17:00:46
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+// Last updated: 21/09/2025, 17:03:08
 class Solution {
-    public int countNodes(TreeNode root) {
-        if (root == null) return 0;
-        int leftHeight = 0, rightHeight = 0;
-        TreeNode l = root, r = root;
-        while (l != null) { leftHeight++; l = l.left; }
-        while (r != null) { rightHeight++; r = r.right; }
-        if (leftHeight == rightHeight) return (1 << leftHeight) - 1;
-        return 1 + countNodes(root.left) + countNodes(root.right);
+    public int computeArea(int ax1, int ay1, int ax2, int ay2,
+                           int bx1, int by1, int bx2, int by2) {
+        int area1 = (ax2 - ax1) * (ay2 - ay1);
+        int area2 = (bx2 - bx1) * (by2 - by1);
+        int overlapWidth = Math.max(0, Math.min(ax2, bx2) - Math.max(ax1, bx1));
+        int overlapHeight = Math.max(0, Math.min(ay2, by2) - Math.max(ay1, by1));
+        int overlapArea = overlapWidth * overlapHeight;
+        return area1 + area2 - overlapArea;
     }
 }
