@@ -1,29 +1,33 @@
-// Last updated: 21/09/2025, 17:15:26
-import java.util.*;
-
+// Last updated: 21/09/2025, 17:16:32
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
 class Solution {
-    public List<Integer> majorityElement(int[] nums) {
-        Integer candidate1 = null, candidate2 = null;
-        int count1 = 0, count2 = 0;
-        
-        for (int num : nums) {
-            if (candidate1 != null && num == candidate1.intValue()) count1++;
-            else if (candidate2 != null && num == candidate2.intValue()) count2++;
-            else if (count1 == 0) { candidate1 = num; count1 = 1; }
-            else if (count2 == 0) { candidate2 = num; count2 = 1; }
-            else { count1--; count2--; }
+    public int kthSmallest(TreeNode root, int k) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode curr = root;
+        while (curr != null || !stack.isEmpty()) {
+            while (curr != null) {
+                stack.push(curr);
+                curr = curr.left;
+            }
+            curr = stack.pop();
+            k--;
+            if (k == 0) return curr.val;
+            curr = curr.right;
         }
-        
-        count1 = 0; count2 = 0;
-        for (int num : nums) {
-            if (candidate1 != null && num == candidate1.intValue()) count1++;
-            else if (candidate2 != null && num == candidate2.intValue()) count2++;
-        }
-        
-        List<Integer> res = new ArrayList<>();
-        int n = nums.length;
-        if (count1 > n / 3) res.add(candidate1);
-        if (count2 > n / 3) res.add(candidate2);
-        return res;
+        return -1; // unreachable since k is valid
     }
 }
