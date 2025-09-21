@@ -1,25 +1,40 @@
-// Last updated: 21/09/2025, 17:51:17
+// Last updated: 21/09/2025, 18:07:54
+import java.util.*;
+
 class Solution {
-    public boolean searchMatrix(int[][] matrix, int target) {
-        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return false;
+    public List<Integer> diffWaysToCompute(String expression) {
+        // Memoization to avoid recomputation
+        Map<String, List<Integer>> memo = new HashMap<>();
+        return compute(expression, memo);
+    }
 
-        int m = matrix.length;
-        int n = matrix[0].length;
+    private List<Integer> compute(String expr, Map<String, List<Integer>> memo) {
+        if (memo.containsKey(expr)) return memo.get(expr);
 
-        // Start from top-right corner
-        int row = 0;
-        int col = n - 1;
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < expr.length(); i++) {
+            char c = expr.charAt(i);
+            if (c == '+' || c == '-' || c == '*') {
+                String leftPart = expr.substring(0, i);
+                String rightPart = expr.substring(i + 1);
 
-        while (row < m && col >= 0) {
-            if (matrix[row][col] == target) {
-                return true;
-            } else if (matrix[row][col] > target) {
-                col--; // move left
-            } else {
-                row++; // move down
+                List<Integer> leftResults = compute(leftPart, memo);
+                List<Integer> rightResults = compute(rightPart, memo);
+
+                for (int left : leftResults) {
+                    for (int right : rightResults) {
+                        if (c == '+') res.add(left + right);
+                        else if (c == '-') res.add(left - right);
+                        else if (c == '*') res.add(left * right);
+                    }
+                }
             }
         }
 
-        return false;
+        // If res is empty, expr is a number
+        if (res.isEmpty()) res.add(Integer.parseInt(expr));
+
+        memo.put(expr, res);
+        return res;
     }
 }
