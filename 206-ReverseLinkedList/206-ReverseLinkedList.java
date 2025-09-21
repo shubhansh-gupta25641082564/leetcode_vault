@@ -1,20 +1,38 @@
-// Last updated: 21/09/2025, 17:38:47
+// Last updated: 21/09/2025, 17:39:27
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
 class Solution {
-    public int countDigitOne(int n) {
-        long digit = 1, res = 0;
-        long high = n / 10, cur = n % 10, low = 0;
+    public boolean isPalindrome(ListNode head) {
+        if (head == null || head.next == null) return true;
         
-        while (high != 0 || cur != 0) {
-            if (cur == 0) res += high * digit;
-            else if (cur == 1) res += high * digit + low + 1;
-            else res += (high + 1) * digit;
-            
-            low += cur * digit;
-            cur = (int)(high % 10);
-            high /= 10;
-            digit *= 10;
+        ListNode slow = head, fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
         }
         
-        return (int)res;
+        ListNode prev = null, curr = slow.next;
+        while (curr != null) {
+            ListNode temp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = temp;
+        }
+        
+        ListNode first = head, second = prev;
+        while (second != null) {
+            if (first.val != second.val) return false;
+            first = first.next;
+            second = second.next;
+        }
+        return true;
     }
 }
