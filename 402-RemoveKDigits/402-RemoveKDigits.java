@@ -1,13 +1,11 @@
-// Last updated: 22/09/2025, 07:51:33
+// Last updated: 22/09/2025, 07:52:12
+import java.util.*;
+
 class Solution {
-    public String toHex(int num) {
-        if (num == 0) return "0";
-        char[] hex = "0123456789abcdef".toCharArray();
-        StringBuilder sb = new StringBuilder();
-        while (num != 0) {
-            sb.append(hex[num & 0xf]);
-            num = num >>> 4;
-        }
-        return sb.reverse().toString();
+    public int[][] reconstructQueue(int[][] people) {
+        Arrays.sort(people, (a, b) -> a[0] == b[0] ? a[1] - b[1] : b[0] - a[0]);
+        List<int[]> ans = new LinkedList<>();
+        for (int[] p : people) ans.add(p[1], p);
+        return ans.toArray(new int[people.length][]);
     }
 }
