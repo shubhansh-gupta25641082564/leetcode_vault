@@ -1,12 +1,13 @@
-// Last updated: 22/09/2025, 07:50:56
+// Last updated: 22/09/2025, 07:51:33
 class Solution {
-    public int sumOfLeftLeaves(TreeNode root) {
-        return dfs(root, false);
-    }
-    
-    private int dfs(TreeNode node, boolean isLeft) {
-        if (node == null) return 0;
-        if (node.left == null && node.right == null) return isLeft ? node.val : 0;
-        return dfs(node.left, true) + dfs(node.right, false);
+    public String toHex(int num) {
+        if (num == 0) return "0";
+        char[] hex = "0123456789abcdef".toCharArray();
+        StringBuilder sb = new StringBuilder();
+        while (num != 0) {
+            sb.append(hex[num & 0xf]);
+            num = num >>> 4;
+        }
+        return sb.reverse().toString();
     }
 }
