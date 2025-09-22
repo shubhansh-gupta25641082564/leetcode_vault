@@ -1,4 +1,4 @@
-// Last updated: 22/09/2025, 16:11:11
+// Last updated: 22/09/2025, 16:19:26
 class Solution {
     public int maxFrequencyElements(int[] nums) {
         int[] freq = new int[101];
