@@ -1,20 +1,22 @@
-// Last updated: 22/09/2025, 07:49:35
+// Last updated: 22/09/2025, 07:50:23
+import java.util.*;
+
 class Solution {
-    public String removeKdigits(String num, int k) {
-        int n = num.length();
-        if (k >= n) return "0";
-        StringBuilder stack = new StringBuilder();
-        for (char c : num.toCharArray()) {
-            while (stack.length() > 0 && k > 0 && stack.charAt(stack.length() - 1) > c) {
-                stack.deleteCharAt(stack.length() - 1);
-                k--;
+    public boolean canCross(int[] stones) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int s : stones) map.put(s, new HashSet<>());
+        map.get(0).add(0);
+        for (int s : stones) {
+            Set<Integer> jumps = map.get(s);
+            if (jumps.isEmpty()) continue;
+            for (int k : jumps) {
+                for (int step = k - 1; step <= k + 1; step++) {
+                    if (step > 0 && map.containsKey(s + step)) {
+                        map.get(s + step).add(step);
+                    }
+                }
             }
-            stack.append(c);
         }
-        stack.setLength(stack.length() - k);
-        int idx = 0;
-        while (idx < stack.length() && stack.charAt(idx) == '0') idx++;
-        String ans = stack.substring(idx);
-        return ans.isEmpty() ? "0" : ans;
+        return !map.get(stones[stones.length - 1]).isEmpty();
     }
 }
