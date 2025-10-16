@@ -1,46 +1,59 @@
-// Last updated: 16/10/2025, 22:53:59
+// Last updated: 16/10/2025, 23:01:50
 class Solution {
-    public String removeSubstring(String s, int k) {
-        int n = s.length();
-        java.util.ArrayList<int[]> st = new java.util.ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            char c = s.charAt(i);
-            if (!st.isEmpty() && st.get(st.size() - 1)[0] == c) {
-                st.get(st.size() - 1)[1]++;
-            } else {
-                st.add(new int[]{c, 1});
+    public long countNoZeroPairs(long n) {
+        int[] d = toDigits(n);
+        java.util.HashMap<Long, Long> memo = new java.util.HashMap<>();
+        return dfs(0, 0, 0, 0, 0, 0, d, memo);
+    }
+
+    private long dfs(int pos, int carry, int aEnd, int bEnd, int aStart, int bStart, int[] d, java.util.HashMap<Long, Long> memo) {
+        if (pos == d.length) {
+            return (carry == 0 && aStart == 1 && bStart == 1) ? 1L : 0L;
+        }
+        long key = (((((((long)pos<<1)|carry)<<1)|aEnd)<<1|bEnd)<<1|aStart)<<1|bStart;
+        Long got = memo.get(key);
+        if (got != null) return got;
+        long res = 0L;
+        int target = d[pos];
+        int aMin = (aEnd == 1) ? 0 : 0;
+        int aMax = (aEnd == 1) ? 0 : 9;
+        int bMin = (bEnd == 1) ? 0 : 0;
+        int bMax = (bEnd == 1) ? 0 : 9;
+        for (int da = aMin; da <= aMax; da++) {
+            if (aEnd == 0 && da == 0) {
+            } else if (aEnd == 0 && da == 0) {
             }
-            while (st.size() >= 2) {
-                int[] last = st.get(st.size() - 1);
-                int[] prev = st.get(st.size() - 2);
-                if (last[0] == ')' && prev[0] == '(') {
-                    int removeBlocks = Math.min(prev[1] / k, last[1] / k);
-                    if (removeBlocks == 0) break;
-                    prev[1] -= removeBlocks * k;
-                    last[1] -= removeBlocks * k;
-                    if (last[1] == 0) {
-                        st.remove(st.size() - 1);
-                    }
-                    if (prev[1] == 0) {
-                        st.remove(st.size() - 1);
-                    }
-                    if (st.size() >= 2) {
-                        int[] a = st.get(st.size() - 1);
-                        int[] b = st.get(st.size() - 2);
-                        if (a[0] == b[0]) {
-                            b[1] += a[1];
-                            st.remove(st.size() - 1);
-                        }
-                    }
-                } else {
-                    break;
-                }
+            int naEnd = (aEnd == 1 || da == 0) ? 1 : 0;
+            if (aEnd == 1 && da != 0) continue;
+            if (aEnd == 0 && da == 0) naEnd = 1;
+            int naStart = (aStart == 1 || da > 0) ? 1 : 0;
+            for (int db = bMin; db <= bMax; db++) {
+                int nbEnd = (bEnd == 1 || db == 0) ? 1 : 0;
+                if (bEnd == 1 && db != 0) continue;
+                if (bEnd == 0 && db == 0) nbEnd = 1;
+                int nbStart = (bStart == 1 || db > 0) ? 1 : 0;
+                int sum = da + db + carry;
+                if (sum % 10 != target) continue;
+                int ncarry = sum / 10;
+                if (da == 0 && naStart == 0 && naEnd == 0) continue;
+                if (db == 0 && nbStart == 0 && nbEnd == 0) continue;
+                if (da == 0 && naEnd == 0) continue;
+                if (db == 0 && nbEnd == 0) continue;
+                res += dfs(pos + 1, ncarry, naEnd, nbEnd, naStart, nbStart, d, memo);
             }
         }
-        StringBuilder sb = new StringBuilder();
-        for (int[] node : st) {
-            for (int cnt = 0; cnt < node[1]; cnt++) sb.append((char) node[0]);
+        memo.put(key, res);
+        return res;
+    }
+
+    private int[] toDigits(long n) {
+        java.util.ArrayList<Integer> list = new java.util.ArrayList<>();
+        while (n > 0) {
+            list.add((int)(n % 10));
+            n /= 10;
         }
-        return sb.toString();
+        int[] a = new int[list.size()];
+        for (int i = 0; i < a.length; i++) a[i] = list.get(i);
+        return a;
     }
 }
