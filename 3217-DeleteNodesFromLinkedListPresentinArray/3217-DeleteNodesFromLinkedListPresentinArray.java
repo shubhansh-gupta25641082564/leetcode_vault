@@ -1,4 +1,4 @@
-// Last updated: 01/11/2025, 23:44:54
+// Last updated: 02/11/2025, 00:39:04
 class Solution {
     public ListNode modifiedList(int[] nums, ListNode head) {
         if (head == null || nums == null || nums.length == 0) return head;
