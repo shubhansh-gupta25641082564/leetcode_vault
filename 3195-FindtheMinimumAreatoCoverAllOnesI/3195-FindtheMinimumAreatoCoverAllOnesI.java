@@ -1,21 +1,25 @@
-// Last updated: 20/11/2025, 15:00:40
+// Last updated: 20/11/2025, 15:07:32
 class Solution {
     public int minimumArea(int[][] grid) {
-        int m = grid.length;
-        if (m == 0) return 0;
-        int n = grid[0].length;
-        int minR = m, maxR = -1, minC = n, maxC = -1;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
+        int minr = -1, maxr = grid.length, minc = -1, maxc = grid[0].length;
+        for (int i = 0; i < grid.length; i ++) {
+            for (int j = 0; j < grid[0].length; j ++) {
                 if (grid[i][j] == 1) {
-                    if (i < minR) minR = i;
-                    if (i > maxR) maxR = i;
-                    if (j < minC) minC = j;
-                    if (j > maxC) maxC = j;
+                    if (i > minr) {
+                        minr = i;
+                    }
+                    if (i < maxr) {
+                        maxr = i;
+                    }
+                    if (j > minc) {
+                        minc = j;
+                    }
+                    if (j < maxc) {
+                        maxc = j;
+                    }
                 }
             }
         }
-        if (maxR == -1) return 0;
-        return (maxR - minR + 1) * (maxC - minC + 1);
+        return (minr - maxr + 1) * (minc - maxc + 1);
     }
 }
