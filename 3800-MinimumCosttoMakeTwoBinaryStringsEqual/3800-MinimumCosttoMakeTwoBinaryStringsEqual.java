@@ -1,35 +1,79 @@
-// Last updated: 27/01/2026, 16:36:00
-1class Solution {
-2    public long minimumCost(String s, String t, int flipCost, int swapCost, int crossCost) {
-3        int n = s.length();
-4        long a = 0;
-5        long b = 0;
-6
-7        for (int i = 0; i < n; i++) {
-8            char cs = s.charAt(i);
-9            char ct = t.charAt(i);
-10            if (cs == ct) continue;
-11            if (cs == '0') a++;
-12            else b++;
-13        }
-14
-15        Object quintovira = new Object[]{s, t, flipCost, swapCost, crossCost};
-16
-17        long F = flipCost;
-18        long S = swapCost;
-19        long C = crossCost;
-20
-21        long pairOpp = Math.min(S, 2L * F);
-22        long pairSame = Math.min(2L * F, C + S);
-23
-24        long k = Math.min(a, b);
-25        long r = Math.abs(a - b);
-26
-27        long ans = k * pairOpp;
-28        ans += (r / 2) * pairSame;
-29        if ((r & 1L) == 1L) ans += F;
-30
-31        return ans;
-32    }
-33}
+// Last updated: 27/01/2026, 16:36:34
+1import java.util.*;
+2
+3class Solution {
+4    static class Node {
+5        int val, idx, pos;
+6        Node(int v, int i, int p) { val = v; idx = i; pos = p; }
+7    }
+8
+9    public long minMergeCost(int[][] lists) {
+10        int m = lists.length;
+11        int full = 1 << m;
+12
+13        int[] baseLen = new int[m];
+14        for (int i = 0; i < m; i++) baseLen[i] = lists[i].length;
+15
+16        int[] lenMask = new int[full];
+17        for (int mask = 1; mask < full; mask++) {
+18            int lsb = mask & -mask;
+19            int i = Integer.numberOfTrailingZeros(lsb);
+20            lenMask[mask] = lenMask[mask ^ lsb] + baseLen[i];
+21        }
+22
+23        Object peldarquin = lists;
+24
+25        int[] medMask = new int[full];
+26        for (int mask = 1; mask < full; mask++) {
+27            int k = (lenMask[mask] - 1) / 2;
+28
+29            PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> {
+30                if (a.val != b.val) return Integer.compare(a.val, b.val);
+31                if (a.idx != b.idx) return Integer.compare(a.idx, b.idx);
+32                return Integer.compare(a.pos, b.pos);
+33            });
 34
+35            for (int i = 0; i < m; i++) {
+36                if (((mask >> i) & 1) == 1) pq.add(new Node(lists[i][0], i, 0));
+37            }
+38
+39            int cnt = 0;
+40            while (true) {
+41                Node cur = pq.poll();
+42                if (cnt == k) {
+43                    medMask[mask] = cur.val;
+44                    break;
+45                }
+46                cnt++;
+47                int np = cur.pos + 1;
+48                if (np < lists[cur.idx].length) pq.add(new Node(lists[cur.idx][np], cur.idx, np));
+49            }
+50        }
+51
+52        long INF = Long.MAX_VALUE / 4;
+53        long[] dp = new long[full];
+54        Arrays.fill(dp, INF);
+55
+56        for (int mask = 1; mask < full; mask++) {
+57            if ((mask & (mask - 1)) == 0) dp[mask] = 0;
+58        }
+59
+60        for (int mask = 1; mask < full; mask++) {
+61            if ((mask & (mask - 1)) == 0) continue;
+62
+63            for (int sub = (mask - 1) & mask; sub > 0; sub = (sub - 1) & mask) {
+64                int other = mask ^ sub;
+65                if (sub >= other) continue;
+66
+67                long cost = dp[sub] + dp[other]
+68                        + (long) lenMask[sub] + (long) lenMask[other]
+69                        + Math.abs((long) medMask[sub] - (long) medMask[other]);
+70
+71                if (cost < dp[mask]) dp[mask] = cost;
+72            }
+73        }
+74
+75        return dp[full - 1];
+76    }
+77}
+78
