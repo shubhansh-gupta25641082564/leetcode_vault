@@ -1,4 +1,4 @@
-// Last updated: 02/02/2026, 11:09:19
+// Last updated: 02/02/2026, 11:58:39
 1/**
 2 * Definition for singly-linked list.
 3 * public class ListNode {
@@ -10,19 +10,18 @@
 9 * }
 10 */
 11class Solution {
-12    public int getDecimalValue(ListNode head) {
-13        ListNode temp = head;
-14        int c = 0;
-15        while (temp.next != null) {
-16            temp = temp.next;
-17            c ++;
-18        }
-19        int sum = 0;
-20        for (int i = c; i >= 0; i --) {
-21            int val = head.val;
-22            sum += (int) Math.pow(2, i) * val;
-23            head = head.next;
-24        }
-25        return sum;
-26    }
-27}
+12    public ListNode deleteMiddle(ListNode head) {
+13        if (head.next == null) {
+14            return null;
+15        }
+16        ListNode slow = head, fast = head;
+17        while (fast.next.next != null && fast.next.next.next != null) {
+18            slow = slow.next;
+19            fast = fast.next.next;
+20        }
+21        ListNode middle = slow.next;
+22        slow.next = middle.next;
+23        middle.next = null;
+24        return head;
+25    }
+26}
